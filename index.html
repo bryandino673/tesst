@@ -3,112 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <title>Editable Scrapable Website</title>
+  <meta name="description" content="Test page for web monitor">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
-      line-height: 1.6;
-    }
-    .item {
-      border: 1px solid #ddd;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-    }
-    .item h2 {
-      margin: 0 0 0.5rem;
-    }
-    .updated {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    .editor {
-      margin-top: 2rem;
-      padding: 1rem;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-      border-radius: 8px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
-    }
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; line-height: 1.6; }
+    .item { border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
+    .item h2 { margin: 0 0 0.5rem; }
+    .updated { color: #666; font-size: 0.9rem; }
+    .editor { margin-top: 2rem; padding: 1rem; border: 1px solid #ccc; background: #f9f9f9; border-radius: 8px; }
+    input, textarea { width: 100%; padding: 0.5rem; margin: 0.5rem 0; }
   </style>
 </head>
 <body>
-  <h1>Scrapable & Editable Website</h1>
-  <p class="updated">Last updated: <span id="last-updated">2025-09-02</span></p>
+  <main>
+    <h1>Scrapable & Editable Website</h1>
 
-  <!-- Items container -->
-  <div id="items"></div>
+    <!-- Change this line in the HTML and commit to trigger detection -->
+    <p class="updated">Last updated: 2025-09-03</p>
 
-  <!-- Simple editor -->
-  <div class="editor">
-    <h2>Edit Content</h2>
-    <label>Item Title:</label>
-    <input type="text" id="title" placeholder="e.g., New Magic Wand">
+    <!-- Items are pre-rendered in HTML so the scraper sees them -->
+    <div id="items">
+      <div class="item">
+        <h2>Magic Book</h2>
+        <p>Price: $12.99</p>
+        <p>A book full of mysterious spells.</p>
+      </div>
+      <div class="item">
+        <h2>Crystal Ball</h2>
+        <p>Price: $25.00</p>
+        <p>See into the future… maybe.</p>
+      </div>
+    </div>
 
-    <label>Price:</label>
-    <input type="text" id="price" placeholder="e.g., $19.99">
+    <!-- Optional: keep the editor for browser interaction.
+         Note: changes here are NOT detected by the monitor unless you also change the HTML file and redeploy. -->
+    <article class="editor">
+      <h2>Edit Content (for demo only)</h2>
+      <label>Item Title:</label>
+      <input type="text" id="title" placeholder="e.g., New Magic Wand">
 
-    <label>Description:</label>
-    <textarea id="description" placeholder="Enter description..."></textarea>
+      <label>Price:</label>
+      <input type="text" id="price" placeholder="e.g., $19.99">
 
-    <button onclick="addItem()">Add / Update Item</button>
-    <button onclick="clearItems()">Clear All Items</button>
-  </div>
+      <label>Description:</label>
+      <textarea id="description" placeholder="Enter description..."></textarea>
+
+      <button onclick="addItem()">Add / Update Item</button>
+      <button onclick="clearItems()">Clear All Items</button>
+    </article>
+  </main>
 
   <script>
-    // Load items from localStorage or default
-    let items = JSON.parse(localStorage.getItem("items")) || [
+    // The editor updates the DOM for the viewer only; not visible to the monitor.
+    let items = [
       { title: "Magic Book", price: "$12.99", description: "A book full of mysterious spells." },
       { title: "Crystal Ball", price: "$25.00", description: "See into the future… maybe." }
     ];
-
     function renderItems() {
       const container = document.getElementById("items");
-      container.innerHTML = "";
-      items.forEach((item, index) => {
-        container.innerHTML += `
-          <div class="item">
-            <h2>${item.title}</h2>
-            <p>Price: ${item.price}</p>
-            <p>${item.description}</p>
-          </div>
-        `;
-      });
+      container.innerHTML = items.map(item => `
+        <div class="item">
+          <h2>${item.title}</h2>
+          <p>Price: ${item.price}</p>
+          <p>${item.description}</p>
+        </div>
+      `).join("");
     }
-
     function addItem() {
-      const title = document.getElementById("title").value;
-      const price = document.getElementById("price").value;
-      const description = document.getElementById("description").value;
-
+      const title = document.getElementById("title").value.trim();
+      const price = document.getElementById("price").value.trim();
+      const description = document.getElementById("description").value.trim();
       if (title && price && description) {
         items.push({ title, price, description });
-        localStorage.setItem("items", JSON.stringify(items));
         renderItems();
-        updateDate();
       }
     }
-
     function clearItems() {
       items = [];
-      localStorage.removeItem("items");
       renderItems();
-      updateDate();
     }
-
-    function updateDate() {
-      document.getElementById("last-updated").textContent = new Date().toISOString().split("T")[0];
-    }
-
-    // Initial render
-    renderItems();
-    updateDate();
   </script>
 </body>
 </html>
