@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Editable Scrapable Website</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      line-height: 1.6;
+    }
+    .item {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+    }
+    .item h2 {
+      margin: 0 0 0.5rem;
+    }
+    .updated {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .editor {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Scrapable & Editable Website</h1>
+  <p class="updated">Last updated: <span id="last-updated">2025-09-02</span></p>
+
+  <!-- Items container -->
+  <div id="items"></div>
+
+  <!-- Simple editor -->
+  <div class="editor">
+    <h2>Edit Content</h2>
+    <label>Item Title:</label>
+    <input type="text" id="title" placeholder="e.g., New Magic Wand">
+
+    <label>Price:</label>
+    <input type="text" id="price" placeholder="e.g., $19.99">
+
+    <label>Description:</label>
+    <textarea id="description" placeholder="Enter description..."></textarea>
+
+    <button onclick="addItem()">Add / Update Item</button>
+    <button onclick="clearItems()">Clear All Items</button>
+  </div>
+
+  <script>
+    // Load items from localStorage or default
+    let items = JSON.parse(localStorage.getItem("items")) || [
+      { title: "Magic Book", price: "$12.99", description: "A book full of mysterious spells." },
+      { title: "Crystal Ball", price: "$25.00", description: "See into the future… maybe." }
+    ];
+
+    function renderItems() {
+      const container = document.getElementById("items");
+      container.innerHTML = "";
+      items.forEach((item, index) => {
+        container.innerHTML += `
+          <div class="item">
+            <h2>${item.title}</h2>
+            <p>Price: ${item.price}</p>
+            <p>${item.description}</p>
+          </div>
+        `;
+      });
+    }
+
+    function addItem() {
+      const title = document.getElementById("title").value;
+      const price = document.getElementById("price").value;
+      const description = document.getElementById("description").value;
+
+      if (title && price && description) {
+        items.push({ title, price, description });
+        localStorage.setItem("items", JSON.stringify(items));
+        renderItems();
+        updateDate();
+      }
+    }
+
+    function clearItems() {
+      items = [];
+      localStorage.removeItem("items");
+      renderItems();
+      updateDate();
+    }
+
+    function updateDate() {
+      document.getElementById("last-updated").textContent = new Date().toISOString().split("T")[0];
+    }
+
+    // Initial render
+    renderItems();
+    updateDate();
+  </script>
+</body>
+</html>
